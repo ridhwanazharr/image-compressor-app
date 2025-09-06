@@ -1,0 +1,23 @@
+body {
+  font-family: sans-serif;
+  max-width: 600px;
+  margin: 2rem auto;
+  text-align: center;
+}
+
+#dropZone {
+  border: 2px dashed #666;
+  padding: 2rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+
+#results {
+  margin-top: 2rem;
+}
+
+#results a {
+  display: block;
+  margin: 0.5rem 0;
+  color: blue;
+}

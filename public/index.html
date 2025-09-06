@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Image Batch Processor</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body style="background: #cfecff; background: linear-gradient(305deg, rgba(207, 236, 255, 1) 0%, rgba(255, 233, 186, 1) 100%); background-repeat: no-repeat; background-size: cover; background-attachment: fixed;">
+  <div class="container py-4">
+    <h1>📷 Image Batch Processor</h1>
+    <p>Convert image file into multiple breakpoints and format, then make code for 'picture' element</p>
+    <div class="row">
+        <div class="col-12 col-lg-5">
+            <div class="card">
+                <div class="card-header"><h2>Input</h2></div>
+                <div class="card-body">
+                    <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Upload Image</label>
+                        <input type="file" class="form-control" id="image" name="image" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pathInput" class="form-label">Path</label>
+                        <input type="text" class="form-control" id="pathInput" name="pathInput" placeholder="./assets/img/">
+                    </div>
+                    <div class="mb-3">
+                        <label for="classInput" class="form-label">Class</label>
+                        <input type="text" class="form-control" id="classInput" name="classInput" placeholder="img-contain or img-cover">
+                    </div>
+                    <div class="mb-3">
+                        <label for="altInput" class="form-label">Alt Text</label>
+                        <input type="text" class="form-control" id="altInput" name="altInput" placeholder="Insert alt text">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Convert</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-7">
+            <div class="card">
+                <div class="card-header"><h2>Output</h2></div>
+                <div class="card-body">
+                    <i id="outputMessage" class="mb-3">No Output here.</i>
+                    <div id="imageList"></div>
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <pre><code id="output">the snippet will be placed here..</code></pre>
+                            <button id="copyBtn" class="btn btn-success" style="display:none;">Copy Code</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+  </div>
+  <script>
+    document.getElementById("uploadForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const fileInput = document.getElementById("image");
+    if (!fileInput.files.length) {
+        alert("Please select a file");
+        return;
+    }
+
+    // Collect all form data (file + inputs)
+    const formData = new FormData(this);
+
+    //Set Loading Message
+    const outputMessage = document.getElementById('outputMessage');
+    const imageListContainer = document.getElementById('imageList');
+    outputMessage.innerHTML = '⏳ Loading...';
+
+    // Send to backend
+    const res = await fetch("/upload", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+        alert("Error: " + data.error);
+        return;
+    }
+
+    //Complete Message
+    outputMessage.innerHTML = 'Convert Complete, the image is placed on output folder :';
+    imageListContainer.innerHTML = data.ImageList;
+
+    // Escape snippet so it shows inside <pre><code>
+    const escaped = data.pictureHTML
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+    document.getElementById("output").innerHTML = escaped;
+    document.getElementById("copyBtn").style.display = "inline-block";
+
+    });
+
+    document.getElementById("copyBtn").addEventListener("click", function() {
+    const code = document.getElementById("output").innerText;
+    navigator.clipboard.writeText(code).then(() => {
+        this.innerText = "Copied!";
+        setTimeout(() => {
+        this.innerText = "Copy Code";
+        }, 2000);
+    });
+    });
+    </script>
+</body>
+</html>
