@@ -27,9 +27,4 @@ It automatically generates **AVIF** images for modern browsers, plus a **PNG fal
 
 ## 📦 Installation
 
-Clone the repo and install dependencies:
-
-```bash
-git clone https://github.com/your-username/image-converter-mini-app.git
-cd image-converter-mini-app
-npm install
+Clone the repo and install dependencies.
